@@ -15,8 +15,11 @@ This FastAPI application provides a simple yet robust proxy service for AWS S3. 
 - Python 3.8+
 - FastAPI
 - Uvicorn
-- aioboto3
+- boto3
 - python-decouple
+- python-multipart
+- pytest
+- httpx
 
 ## MinIO Server Setup
 
@@ -46,8 +49,8 @@ MinIO provides an S3-compatible object storage server that you can run locally f
 1. **Clone the repository**:
 
 ```
-git clone https://your-repository-url.git
-cd your-repository
+git clone https://github.com/vihuse/S3ProxyAPI.git
+cd S3ProxyAPI
 ```
 
 2. **Set up a virtual environment** (optional, but recommended):

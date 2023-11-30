@@ -41,7 +41,9 @@ def upload_file_to_s3(bucket: str, object_name: str, file: UploadFile, s3_client
     :raises HTTPException: If any error occurs during file upload.
     """
     try:
+        logger.info(f"Uploading file {object_name} to bucket {bucket}")
         s3_client.upload_fileobj(file.file, bucket, object_name)
+        logger.info(f"File {object_name} uploaded successfully to bucket {bucket}")
     except NoCredentialsError:
         logger.error("AWS credentials not found")
         raise HTTPException(status_code=500, detail="AWS credentials not found")
@@ -49,7 +51,7 @@ def upload_file_to_s3(bucket: str, object_name: str, file: UploadFile, s3_client
         logger.error(f"ClientError during file upload: {e}")
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        logger.error(f"Unexpected error: {e}")
+        logger.error(f"Unexpected error during file upload: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {e}")
 
 
@@ -64,10 +66,21 @@ def get_file_from_s3(bucket: str, object_name: str, s3_client):
     :raises HTTPException: If the file is not found or any other error occurs.
     """
     try:
+        logger.info(f"Retrieving file {object_name} from bucket {bucket}")
         file_obj = s3_client.get_object(Bucket=bucket, Key=object_name)
+        logger.info(f"File {object_name} retrieved successfully from bucket {bucket}")
         return io.BytesIO(file_obj["Body"].read())
     except ClientError as e:
         if "NoSuchKey" in str(e):
+            logger.error(f"File {object_name} not found in bucket {bucket}")
             raise HTTPException(status_code=404, detail="File not found")
         else:
+            logger.error(
+                f"Error retrieving file {object_name} from bucket {bucket}: {e}"
+            )
             raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        logger.error(
+            f"Unexpected error retrieving file {object_name} from bucket {bucket}: {e}"
+        )
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {e}")

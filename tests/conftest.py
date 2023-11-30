@@ -28,7 +28,7 @@ def create_test_bucket():
     try:
         s3_client.create_bucket(Bucket="testbucket")
     except ClientError as e:
-        if e.response['Error']['Code'] == 'BucketAlreadyOwnedByYou':
+        if e.response["Error"]["Code"] == "BucketAlreadyOwnedByYou":
             # If the bucket already exists and is owned by the user, ignore the error
             pass
         else:
